@@ -4,9 +4,11 @@ import { Form, Input, message } from "antd";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../services/API";
+import { useSelector } from "react-redux";
 const Register = () => {
   const navigate = useNavigate();
-
+  const loader = useSelector(state=>state.alerts.loading)
+  console.log(loader)
   //form handler
   const onfinishHandler = async (values) => {
     try {
