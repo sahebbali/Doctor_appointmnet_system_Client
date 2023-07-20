@@ -3,13 +3,18 @@ import "../styles/RegiserStyles.css";
 import { Form, Input, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useDispatch } from "react-redux";
 import API from "../services/API";
+import { hideLoading, showLoading } from "../redux/features/alertSlice";
 const Login = () => {
   const navigate = useNavigate();
+  const dispathch = useDispatch();
   //form handler
   const onfinishHandler = async (values) => {
     try {
+      dispathch(showLoading());
       const res = await API.post("/user/login", values);
+      dispathch(hideLoading());
       if (res.data.success) {
         localStorage.setItem("token", res.data.token);
         message.success("Login Successfully");
@@ -18,6 +23,7 @@ const Login = () => {
         message.error(res.data.message);
       }
     } catch (error) {
+      dispathch(hideLoading());
       console.log(error);
       message.error("something went wrong");
     }
