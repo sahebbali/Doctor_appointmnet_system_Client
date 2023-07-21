@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Layout from "./../../components/Layout";
 import axios from "axios";
 import API from "../../services/API";
-import { Table } from "antd";
+import { Table, message } from "antd";
 
 const Doctors = () => {
   const [doctors, setDoctors] = useState([]);
@@ -21,6 +21,28 @@ const Doctors = () => {
       console.log(error);
     }
   };
+
+  // handle account
+  const handleAccountStatus = async (record, status) => {
+    try {
+      const res = await API.post(
+        "/admin/changeAccountStatus",
+        { doctorId: record._id, userId: record.userId, status: status },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (res.data.success) {
+        message.success(res.data.message);
+        window.location.reload();
+      }
+    } catch (error) {
+      message.error("Something Went Wrong");
+    }
+  };
+
   useEffect(() => {
     getDoctors();
   }, []);
@@ -49,7 +71,11 @@ const Doctors = () => {
       render: (text, record) => (
         <div className="d-flex">
           {record.status === "pending" ? (
-            <button className="btn btn-success">Approve</button>
+            <button 
+            onClick={() => handleAccountStatus(record, "approved")}
+            className="btn btn-success"
+            >Approve
+            </button>
           ) : (
             <button className="btn btn-danger">Reject</button>
           )}
