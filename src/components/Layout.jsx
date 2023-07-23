@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   // logout funtion
-  console.log(user);
+
   const handleLogout = () => {
     localStorage.clear();
     message.success("Logout Successfully");

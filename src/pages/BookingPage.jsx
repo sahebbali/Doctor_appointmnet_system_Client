@@ -15,7 +15,7 @@ const BookingPage = () => {
   const [doctors, setDoctors] = useState([]);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [isAvailable, setIsAvailable] = useState();
+  const [isAvailable, setIsAvailable] = useState(false);
   const dispatch = useDispatch();
   // login user data
   const getUserData = async () => {
@@ -36,6 +36,12 @@ const BookingPage = () => {
       console.log(error);
     }
   };
+  useEffect(() => {
+    getUserData();
+    //eslint-disable-next-line
+  }, []);
+
+
   // =============== booking func
   const handleBooking = async () => {
     try {
@@ -66,10 +72,32 @@ const BookingPage = () => {
     }
   };
 
-  useEffect(() => {
-    getUserData();
-    //eslint-disable-next-line
-  }, []);
+   // ============ handle availiblity
+   const handleAvailability = async () => {
+    try {
+      dispatch(showLoading());
+      const res = await API.post(
+        "/user/booking-availbility",
+        { doctorId: params.doctorId, date, time },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      dispatch(hideLoading());
+      if (res.data.success) {
+        setIsAvailable(true);
+        console.log(isAvailable);
+        message.success(res.data.message);
+      } else {
+        message.error(res.data.message);
+      }
+    } catch (error) {
+      dispatch(hideLoading());
+      console.log(error);
+    }
+  };
   return (
     <Layout>
       <h3>Booking Page</h3>
@@ -99,7 +127,9 @@ const BookingPage = () => {
                   setTime(moment(value).format("HH:mm"));
                 }}
               />
-              <button className="btn btn-primary mt-2">
+              <button 
+              onClick={handleAvailability}
+              className="btn btn-primary mt-2">
                 Check Availability
               </button>
               <button className="btn btn-dark mt-2" onClick={handleBooking}>
