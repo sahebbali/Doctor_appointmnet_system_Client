@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiKey = 'http://localhost:8000/api/v1';
+const apiKey = 'https://doctor-appointmnet.onrender.com/api/v1';
 
 
 const API = axios.create({ baseURL:apiKey });
